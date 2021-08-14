@@ -6,6 +6,8 @@ function UserList() {
         <div>
             <h2>User List</h2>
             <UserItem/>
+            <UserItem/>
+            <UserItem/>
         </div>
     )
 }
