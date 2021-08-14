@@ -5,9 +5,7 @@ function UserList() {
     return (
         <div>
             <h2>User List</h2>
-            <UserItem/>
-            <UserItem/>
-            <UserItem/>
+            <UserItem name="User name" avatar="https://picsum.photos/200" />
         </div>
     )
 }
