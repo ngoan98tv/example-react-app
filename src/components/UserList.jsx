@@ -8,7 +8,7 @@ function UserList() {
 
     const renderUser = () => (
         users.map(({ name, id, avatar }) => (
-            <UserItem key={id} name={name} avatar={avatar} />
+            <UserItem key={id} id={id} name={name} avatar={avatar} />
         ))
     )
 
