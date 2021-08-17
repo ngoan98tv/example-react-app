@@ -12,7 +12,7 @@ function UserDetail() {
         return <div>
             <img src={avatar} alt="" />
             <h3>{name}</h3>
-            <p>{createdAt}</p>
+            <p>{new Date(createdAt).toLocaleString('vi-VN')}</p>
         </div>
     };
 
