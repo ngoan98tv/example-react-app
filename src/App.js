@@ -8,6 +8,7 @@ import {
   Link
 } from "react-router-dom";
 import UserDetail from './components/UserDetail';
+import UserForm from './components/UserForm';
 
 
 function App() {
@@ -19,12 +20,18 @@ function App() {
             <li>
               <Link to="/">Home</Link>
             </li>
+            <li>
+              <Link to="/create">New user</Link>
+            </li>
           </ul>
         </nav>
 
         <Switch>
+          <Route path="/create">
+            <UserForm />
+          </Route>
           <Route path="/detail/:id">
-            <UserDetail/>
+            <UserDetail />
           </Route>
           <Route path="/">
             <UserList />

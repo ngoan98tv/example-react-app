@@ -31,3 +31,24 @@ code {
   font-weight: bold;
   color: green;
 }
+
+input {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+}
+
+form {
+  max-width: 300px;
+  margin: auto;
+}
+
+label {
+  display: block;
+  margin: 12px 0px 6px;
+}
+
+form button {
+  margin: 24px 0;
+  padding: 6px 12px;
+}
