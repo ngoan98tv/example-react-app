@@ -1,56 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import useUserCreate from "../hooks/useUserCreate";
 
 function UserForm() {
-  const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({});
+    const [createUser, { loading, success, error }] = useUserCreate();
 
-  // T0  formData = {}
-  // T1  name=abc -> handleChange('name') -> prev={} new={ name: 'abc' }
-  // T2 prev={ name: 'abc' }
+    const handleChange = (field) => (event) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: event.target.value,
+        }));
+    };
 
-  // prev = { name: abc, avatar: abc }
-  // new  = { avatar: abc, name: xyz }
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        createUser(formData);
+    };
 
-  const handleChange = (field) => (event) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: event.target.value,
-    }));
-  };
+    useEffect(() => {
+        if (!success) return;
+        setFormData({});
+    }, [success])
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(formData);
-  };
-
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    return (
         <div>
-          <label htmlFor="user_name">Name</label>
-          <input
-            value={formData["name"] || ""}
-            onChange={handleChange("name")}
-            type="text"
-            name="user_name"
-            id="user_name"
-            placeholder="Enter your name"
-          />
+            {loading && <em>Creating user....</em>}
+            {error && <em>An error occurred, please try again</em>}
+            {success && <em>User is created successfully</em>}
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="user_name">Name</label>
+                    <input
+                        value={formData["name"] || ""}
+                        onChange={handleChange("name")}
+                        type="text"
+                        name="user_name"
+                        id="user_name"
+                        placeholder="Enter your name"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="user_avatar">Avatar</label>
+                    <input
+                        value={formData["avatar"] || ""}
+                        onChange={handleChange("avatar")}
+                        type="text"
+                        name="user_avatar"
+                        id="user_avatar"
+                        placeholder="Enter your avatar url"
+                    />
+                </div>
+                <button disabled={loading} type="submit">Submit</button>
+            </form>
         </div>
-        <div>
-          <label htmlFor="user_avatar">Avatar</label>
-          <input
-            value={formData["avatar"] || ""}
-            onChange={handleChange("avatar")}
-            type="text"
-            name="user_avatar"
-            id="user_avatar"
-            placeholder="Enter your avatar url"
-          />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-  );
+    );
 }
 
 export default UserForm;
