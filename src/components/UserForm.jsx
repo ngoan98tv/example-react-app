@@ -32,12 +32,12 @@ function UserForm() {
     const isUpdate = !!id;
     const isReady = !isUpdate || (userDataSuccess && userData);
 
-    const handleChange = (field) => (event) => {
+    const handleChange = (event, field) => {
         setFormData((prev) => ({
             ...prev,
             [field]: event.target.value,
         }));
-    };
+    };;
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -90,7 +90,7 @@ function UserForm() {
                         <label htmlFor="user_name">Name</label>
                         <input
                             value={formData["name"] || ""}
-                            onChange={handleChange("name")}
+                            onChange={(e) => handleChange(e, "name")}
                             type="text"
                             name="user_name"
                             id="user_name"
@@ -101,7 +101,7 @@ function UserForm() {
                         <label htmlFor="user_avatar">Avatar</label>
                         <input
                             value={formData["avatar"] || ""}
-                            onChange={handleChange("avatar")}
+                            onChange={(e) => handleChange(e, "avatar")}
                             type="text"
                             name="user_avatar"
                             id="user_avatar"
