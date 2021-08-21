@@ -1,15 +1,33 @@
+import useAxios from "axios-hooks";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useUserById from "../hooks/useUserById";
-import useUserCreate from "../hooks/useUserCreate";
-import useUserUpdate from "../hooks/useUserUpdate";
 
 function UserForm() {
     const { id } = useParams();
-    const [userData, userDataLoading, userDataSuccess, userDataError ] = useUserById(id);
+    const [{ data: userData, loading: userDataLoading, error: userDataError }] = useAxios(`users/${id}`);
     const [formData, setFormData] = useState({});
-    const [createUser, { loading: cLoading, success: cSuccess, error: cError }] = useUserCreate();
-    const [updateUser, { loading: uLoading, success: uSuccess, error: uError }] = useUserUpdate();
+
+    const userDataSuccess = !userDataLoading && !userDataError;
+
+    const [{ loading: cLoading, error: cError, response: cResponse }, createUser] = useAxios(
+        {
+            url: `users`,
+            method: "POST",
+        },
+        { manual: true }
+    );
+
+    const cSuccess = cResponse && cResponse.status == 201;
+
+    const [{ loading: uLoading, error: uError, response: uResponse }, updateUser] = useAxios(
+        {
+            url: `users/${id}`,
+            method: "PUT",
+        },
+        { manual: true }
+    );
+
+    const uSuccess = uResponse && uResponse.status == 200;
 
     const isUpdate = !!id;
     const isReady = !isUpdate || (userDataSuccess && userData);
@@ -24,28 +42,28 @@ function UserForm() {
     const handleSubmit = (event) => {
         event.preventDefault();
         if (isUpdate) {
-            updateUser(id, formData);
+            updateUser({ data: formData });
         } else {
-            createUser(formData);
+            createUser({ data: formData });
         }
     };
 
     useEffect(() => {
         if (!cSuccess) return;
         setFormData({});
-    }, [cSuccess])
+    }, [cSuccess]);
 
     useEffect(() => {
         if (!isUpdate) {
             setFormData({});
-        };
-    }, [id])
+        }
+    }, [id]);
 
     useEffect(() => {
         if (!isReady || !isUpdate) return;
-        const {name, avatar} = userData || {};
-        setFormData({name, avatar});
-    }, [isReady])
+        const { name, avatar } = userData || {};
+        setFormData({ name, avatar });
+    }, [isReady]);
 
     return (
         <div>
@@ -62,34 +80,39 @@ function UserForm() {
             {/* Status of loading data */}
             {!isReady && userDataLoading && <em>Loading data...</em>}
             {!isReady && userDataError && <em>Cannot load data</em>}
-            {!isReady && userDataSuccess && !userData && <em>Data is empty, nothing to update</em>}
+            {!isReady && userDataSuccess && !userData && (
+                <em>Data is empty, nothing to update</em>
+            )}
 
-            {isReady && <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="user_name">Name</label>
-                    <input
-                        value={formData["name"] || ""}
-                        onChange={handleChange("name")}
-                        type="text"
-                        name="user_name"
-                        id="user_name"
-                        placeholder="Enter your name"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="user_avatar">Avatar</label>
-                    <input
-                        value={formData["avatar"] || ""}
-                        onChange={handleChange("avatar")}
-                        type="text"
-                        name="user_avatar"
-                        id="user_avatar"
-                        placeholder="Enter your avatar url"
-                    />
-                </div>
-                <button disabled={cLoading || uLoading} type="submit">Submit</button>
-            </form>}
-            
+            {isReady && (
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label htmlFor="user_name">Name</label>
+                        <input
+                            value={formData["name"] || ""}
+                            onChange={handleChange("name")}
+                            type="text"
+                            name="user_name"
+                            id="user_name"
+                            placeholder="Enter your name"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="user_avatar">Avatar</label>
+                        <input
+                            value={formData["avatar"] || ""}
+                            onChange={handleChange("avatar")}
+                            type="text"
+                            name="user_avatar"
+                            id="user_avatar"
+                            placeholder="Enter your avatar url"
+                        />
+                    </div>
+                    <button disabled={cLoading || uLoading} type="submit">
+                        Submit
+                    </button>
+                </form>
+            )}
         </div>
     );
 }

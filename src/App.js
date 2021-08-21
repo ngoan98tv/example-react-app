@@ -1,6 +1,5 @@
 import logo from './logo.svg';
 import './App.css';
-import UserList from './components/UserList';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,7 +8,17 @@ import {
 } from "react-router-dom";
 import UserDetail from './components/UserDetail';
 import UserForm from './components/UserForm';
+import { configure } from 'axios-hooks'
+import LRU from 'lru-cache'
+import Axios from 'axios'
+import UserListPage from './components/UserListPage';
 
+const axios = Axios.create({
+  baseURL: 'https://61176b1030022f0017a05df6.mockapi.io/api/v1/',
+})
+const cache = new LRU({ max: 10 })
+
+configure({ axios, cache })
 
 function App() {
   return (
@@ -37,7 +46,7 @@ function App() {
             <UserDetail />
           </Route>
           <Route path="/">
-            <UserList />
+            <UserListPage />
           </Route>
         </Switch>
       </div>
