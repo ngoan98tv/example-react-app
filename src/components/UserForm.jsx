@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import useUserById from "../hooks/useUserById";
 import useUserCreate from "../hooks/useUserCreate";
+import useUserUpdate from "../hooks/useUserUpdate";
 
 function UserForm() {
+    const { id } = useParams();
+    const [userData, userDataLoading, userDataSuccess, userDataError ] = useUserById(id);
     const [formData, setFormData] = useState({});
-    const [createUser, { loading, success, error }] = useUserCreate();
+    const [createUser, { loading: cLoading, success: cSuccess, error: cError }] = useUserCreate();
+    const [updateUser, { loading: uLoading, success: uSuccess, error: uError }] = useUserUpdate();
+
+    const isUpdate = !!id;
+    const isReady = !isUpdate || (userDataSuccess && userData);
 
     const handleChange = (field) => (event) => {
         setFormData((prev) => ({
@@ -14,20 +23,48 @@ function UserForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        createUser(formData);
+        if (isUpdate) {
+            updateUser(id, formData);
+        } else {
+            createUser(formData);
+        }
     };
 
     useEffect(() => {
-        if (!success) return;
+        if (!cSuccess) return;
         setFormData({});
-    }, [success])
+    }, [cSuccess])
+
+    useEffect(() => {
+        if (!isUpdate) {
+            setFormData({});
+        };
+    }, [id])
+
+    useEffect(() => {
+        if (!isReady || !isUpdate) return;
+        const {name, avatar} = userData || {};
+        setFormData({name, avatar});
+    }, [isReady])
 
     return (
         <div>
-            {loading && <em>Creating user....</em>}
-            {error && <em>An error occurred, please try again</em>}
-            {success && <em>User is created successfully</em>}
-            <form onSubmit={handleSubmit}>
+            {/* Status of create */}
+            {cLoading && <em>Creating user....</em>}
+            {cError && <em>An error occurred, please try again</em>}
+            {cSuccess && <em>User is created successfully</em>}
+
+            {/* Status of update */}
+            {uLoading && <em>Updating user....</em>}
+            {uError && <em>An error occurred, please try again</em>}
+            {uSuccess && <em>User is updated successfully</em>}
+
+            {/* Status of loading data */}
+            {!isReady && userDataLoading && <em>Loading data...</em>}
+            {!isReady && userDataError && <em>Cannot load data</em>}
+            {!isReady && userDataSuccess && !userData && <em>Data is empty, nothing to update</em>}
+
+            {isReady && <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="user_name">Name</label>
                     <input
@@ -50,8 +87,9 @@ function UserForm() {
                         placeholder="Enter your avatar url"
                     />
                 </div>
-                <button disabled={loading} type="submit">Submit</button>
-            </form>
+                <button disabled={cLoading || uLoading} type="submit">Submit</button>
+            </form>}
+            
         </div>
     );
 }

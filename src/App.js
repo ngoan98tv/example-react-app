@@ -30,6 +30,9 @@ function App() {
           <Route path="/create">
             <UserForm />
           </Route>
+          <Route path="/update/:id">
+            <UserForm />
+          </Route>
           <Route path="/detail/:id">
             <UserDetail />
           </Route>

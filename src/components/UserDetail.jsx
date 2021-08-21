@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import useUserById from '../hooks/useUserById';
 
 function UserDetail() {
@@ -24,6 +24,7 @@ function UserDetail() {
             {error && <em>Fetch data failed</em>}
             {success && !hasData && <em>No data here</em>}
             {success && hasData && renderUser()}
+            <Link to={`/update/${id}`}>Update</Link>
         </div>
     )
 }

@@ -7,6 +7,7 @@ function useUserById(id) {
     const [data, setData] = useState();
 
     useEffect(() => {
+        if (!id) return;
         setLoading(true);
         setSuccess(false);
         setError(false);
